@@ -1,0 +1,135 @@
+payment-hub/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── PaymentController.php
+│   │   └── Admin/
+│   │       ├── PaymentController.php
+│   │       ├── WalletController.php
+│   │       └── BankController.php
+│   ├── Models/
+│   │   ├── Payment.php
+│   │   ├── Wallet.php
+│   │   └── Bank.php
+│   ├── Services/
+│   │   ├── HmacService.php
+│   │   ├── PaymentCallbackService.php
+│   │   └── FileUploadService.php
+│   └── Middleware/VerifyToken.php
+├── bootstrap/
+├── config/
+├── database/
+│   ├── migrations/
+│   │   ├── create_payments_table.php
+│   │   ├── create_wallets_table.php
+│   │   ├── create_banks_table.php
+│   │   └── create_payment_logs_table.php
+│   └── seeders/
+│       ├── AdminSeeder.php
+│       ├── WalletSeeder.php
+│       └── BankSeeder.php
+├── public/
+│   ├── index.php
+│   └── .htaccess
+├── resources/
+│   ├── views/
+│   │   ├── payment/form.blade.php
+│   │   └── admin/
+│   │       ├── payments.blade.php
+│   │       ├── wallets.blade.php
+│   │       └── banks.blade.php
+│   └── js/payment-form.js
+├── routes/
+│   ├── web.php
+│   └── api.php
+├── storage/app/private/proofs/
+├── tests/
+├── .env.example
+├── .gitignore
+├── artisan
+├── composer.json
+├── composer.lock
+├── install.sh
+├── post-install.php
+└── README.md
+
+
+
+
+payment-hub/
+│
+├── app/                         # Cœur Laravel
+│   ├── Console/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── PaymentController.php
+│   │   │   └── Admin/
+│   │   │       ├── PaymentController.php
+│   │   │       ├── WalletController.php
+│   │   │       └── BankController.php
+│   │   ├── Middleware/
+│   │   │   └── VerifyToken.php
+│   ├── Models/
+│   │   ├── Payment.php
+│   │   ├── Wallet.php
+│   │   └── Bank.php
+│   ├── Services/
+│   │   ├── HmacService.php
+│   │   ├── PaymentCallbackService.php
+│   │   └── FileUploadService.php
+│
+├── bootstrap/
+│
+├── config/
+│   ├── app.php
+│   ├── database.php
+│   └── services.php             # secret HMAC
+│
+├── database/
+│   ├── migrations/
+│   │   ├── xxxx_create_payments_table.php
+│   │   ├── xxxx_create_wallets_table.php
+│   │   ├── xxxx_create_banks_table.php
+│   │   └── xxxx_create_payment_logs_table.php
+│   └── seeders/
+│       ├── BankSeeder.php
+│       ├── WalletSeeder.php
+│       └── AdminSeeder.php
+│
+├── public/                      # Web root (important)
+│   ├── index.php
+│   └── .htaccess
+│
+├── resources/
+│   ├── views/
+│   │   ├── payment/
+│   │   │   └── form.blade.php
+│   │   └── admin/
+│   │       ├── payments.blade.php
+│   │       ├── wallets.blade.php
+│   │       └── banks.blade.php
+│   └── js/
+│       └── payment-form.js
+│
+├── routes/
+│   ├── web.php
+│   └── api.php
+│
+├── storage/
+│   ├── app/
+│   │   └── private/
+│   │       └── proofs/           # preuves paiement (NON PUBLIC)
+│   ├── framework/
+│   └── logs/
+│
+├── tests/
+│
+├── .env.example                 # modèle de configuration
+├── .gitignore
+├── artisan
+├── composer.json
+├── composer.lock
+│
+├── install.sh                   # script installation serveur
+├── post-install.php             # vérifications & setup
+│
+└── README.md                    # documentation installation
