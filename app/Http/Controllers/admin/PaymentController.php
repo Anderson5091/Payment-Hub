@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
-use Illuminate\Http\Request;
+use App\Models\PaymentLog;
+use App\Services\WooCallbackService;
 
 class PaymentController extends Controller
 {
@@ -27,12 +28,27 @@ class PaymentController extends Controller
         $payment = Payment::findOrFail($id);
 
         if ($payment->status !== 'pending') {
-            abort(403);
+            abort(403, 'Paiement déjà traité');
         }
 
-        $payment->update(['status' => 'validated']);
+        $payment->status = 'validated';
+        $payment->save();
 
-        return redirect('/admin/payments')->with('success', 'Paiement validé');
+        // LOG
+        PaymentLog::create([
+            'payment_id' => $payment->id,
+            'order_id'   => $payment->order_id,
+            'event'      => 'payment_validated',
+            'message'    => 'Paiement validé par admin',
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent()
+        ]);
+
+        // CALLBACK WOOCOMMERCE
+        WooCallbackService::send($payment);
+
+        return redirect('/admin/payments')
+            ->with('success', 'Paiement validé');
     }
 
     public function rejectPayment($id)
@@ -40,11 +56,26 @@ class PaymentController extends Controller
         $payment = Payment::findOrFail($id);
 
         if ($payment->status !== 'pending') {
-            abort(403);
+            abort(403, 'Paiement déjà traité');
         }
 
-        $payment->update(['status' => 'rejected']);
+        $payment->status = 'rejected';
+        $payment->save();
 
-        return redirect('/admin/payments')->with('success', 'Paiement rejeté');
+        // LOG
+        PaymentLog::create([
+            'payment_id' => $payment->id,
+            'order_id'   => $payment->order_id,
+            'event'      => 'payment_rejected',
+            'message'    => 'Paiement rejeté par admin',
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent()
+        ]);
+
+        // CALLBACK OPTIONNEL
+        WooCallbackService::send($payment);
+
+        return redirect('/admin/payments')
+            ->with('success', 'Paiement rejeté');
     }
 }

@@ -48,6 +48,9 @@ php artisan migrate --seed
 echo "Création du lien de stockage pour les preuves..."
 php artisan storage:link
 
+php /path/to/payment-hub/artisan payment:retry-callbacks
+
+
 # Permissions
 echo "Définition des permissions pour storage et bootstrap/cache..."
 chmod -R 775 storage bootstrap/cache

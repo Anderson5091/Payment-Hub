@@ -15,4 +15,10 @@ class HmacService
     {
         return hash_equals(self::generate($data), $signature);
     }
+
+    public static function sign(array $data, string $secret): string
+    {
+        ksort($data);
+        return hash_hmac('sha256', json_encode($data), $secret);
+    }
 }
