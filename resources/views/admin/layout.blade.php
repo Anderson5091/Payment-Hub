@@ -11,7 +11,7 @@
     <h1>Payment Hub – Dashboard Admin</h1>
 
     <nav>
-        <a href="/admin/dashboard">Paiements</a> |
+        <a href="/admin/payments">Paiements</a> |
         <a href="/admin/users">Admins</a> |
         <a href="/admin/logs">Logs</a> |
         <form method="POST" action="/admin/logout" style="display:inline">
