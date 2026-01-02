@@ -28,7 +28,7 @@ class AuthController extends Controller
             }
 
             $request->session()->regenerate();
-            return redirect('/admin/dashboard');
+            return redirect('/admin/payments');
         }
 
         return back()->withErrors(['email' => 'Identifiants invalides']);

@@ -12,7 +12,7 @@ class AdminSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin Payment Hub',
-            'email' => 'admin@paymenthub.com',
+            'email' => 'admin@payment_hub.com',//admin@paymenthub.com before
             'password' => Hash::make('ChangeMe123!'),
             'is_admin' => true
         ]);
