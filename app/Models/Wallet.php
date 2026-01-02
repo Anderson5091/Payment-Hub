@@ -1,3 +1,5 @@
+
+
 class Wallet extends Model
 {
     protected $fillable = [
