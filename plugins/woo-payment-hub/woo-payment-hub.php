@@ -6,10 +6,15 @@
  * Author: Payment Hub Team
  */
 if (!defined('ABSPATH')) exit;
-require_once plugin_dir_path(__FILE__) . 'includes/class-gateway-payment-hub.php';
-add_filter('woocommerce_payment_gateways', function ($methods) {
-    $methods[] = 'WC_Gateway_Payment_Hub';
-    return $methods;
+add_action('plugins_loaded', function() {
+    if (!class_exists('WC_Payment_Gateway')) return;
+
+    require_once plugin_dir_path(__FILE__) . 'includes/class-gateway-payment-hub.php';
+
+    add_filter('woocommerce_payment_gateways', function ($methods) {
+        $methods[] = 'WC_Gateway_Payment_Hub';
+        return $methods;
+    });
 });
 add_action('admin_enqueue_scripts', function ($hook) {
     if ($hook !== 'woocommerce_page_wc-settings') return;
