@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-
     public function up()
     {
         Schema::create('payment_logs', function (Blueprint $table) {
@@ -15,13 +14,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('order_id')->nullable();
 
             $table->string('event'); 
-            // examples:
-            // payment_created
-            // payment_validated
-            // payment_rejected
-            // callback_sent
-            // callback_failed
-
             $table->text('message')->nullable();
             $table->json('payload')->nullable();
 
