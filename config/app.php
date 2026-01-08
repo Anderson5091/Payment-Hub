@@ -91,5 +91,6 @@ return [
     ],
 
     'payment_hub_secret' => env('PAYMENT_HUB_SECRET'),
+    'admin_email' => env('ADMIN_EMAIL', 'admin@admin.com'),
     'upload_max_size' => env('UPLOAD_MAX_SIZE', 5120),
 ];

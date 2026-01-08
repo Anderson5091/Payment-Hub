@@ -2,70 +2,58 @@
 
 echo "=== Payment Hub Installation ==="
 
-# Vérification PHP
-PHP_VERSION=$(php -r "echo PHP_VERSION;")
-echo "PHP version: $PHP_VERSION"
-if [[ $(php -r "echo version_compare(PHP_VERSION, '8.1.0', '>=');") -ne 1 ]]; then
-  echo "PHP 8.1 ou supérieur requis."
-  exit 1
+# Get Domain from argument or prompt
+DOMAIN=$1
+if [ -z "$DOMAIN" ]; then
+    read -p "Entrez votre domaine (ex: peye.smartdealz.tech): " DOMAIN
 fi
 
-# Vérifier composer
-if ! command -v composer &> /dev/null; then
-    echo "Composer non trouvé. Veuillez installer Composer."
-    exit 1
-fi
-
-# Installer les dépendances
-echo "Installation des dépendances Composer..."
-composer install --no-interaction --prefer-dist
-
-# Copier le fichier .env
+# Configuration .env
 if [ ! -f .env ]; then
   echo "Création du fichier .env..."
   cp .env.example .env
+  
+  # Configuration de base
+  sed -i "s|APP_URL=.*|APP_URL=https://$DOMAIN|" .env
+  sed -i "s|ADMIN_EMAIL=.*|ADMIN_EMAIL=admin@$DOMAIN|" .env
+  
+  echo "Veuillez configurer manuellement vos accès DB dans le fichier .env sur Hostinger."
+  echo "Une fois fait, relancez ce script."
+  exit 0
 fi
 
-# Générer la clé Laravel
-echo "Génération de la clé d'application..."
-php artisan key:generate
+# Installation des dépendances
+echo "Installation des dépendances Composer..."
+composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Vérifier la base de données
-read -p "Base de données nom: " DB_NAME
-read -p "Utilisateur DB: " DB_USER
-read -s -p "Mot de passe DB: " DB_PASS
-echo ""
+# Générer la clé Laravel si vide
+if ! grep -q "APP_KEY=base64" .env; then
+    echo "Génération de la clé d'application..."
+    php artisan key:generate
+fi
 
-# Génération automatique du secret
-echo "Génération de la clé secrète Payment Hub..."
-HUB_SECRET=$(php -r "echo bin2hex(random_bytes(32));")
-
-sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_NAME/" .env
-sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USER/" .env
-sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASS/" .env
-sed -i "s/PAYMENT_HUB_SECRET=.*/PAYMENT_HUB_SECRET=$HUB_SECRET/" .env
+# Génération automatique du secret Payment Hub si vide
+if grep -q "PAYMENT_HUB_SECRET=CHANGE_ME_SECRET" .env; then
+    echo "Génération de la clé secrète Payment Hub..."
+    HUB_SECRET=$(php -r "echo bin2hex(random_bytes(32));")
+    sed -i "s/PAYMENT_HUB_SECRET=.*/PAYMENT_HUB_SECRET=$HUB_SECRET/" .env
+fi
 
 # Migrations et seeders
 echo "Exécution des migrations et seeders..."
-php artisan migrate --seed
+php artisan migrate --seed --force
 
-# Lien de stockage pour les preuves
-echo "Création du lien de stockage pour les preuves..."
-php artisan storage:link
-
-php ./artisan payment:retry-callbacks
-
+# Lien de stockage
+if [ ! -d public/storage ]; then
+    echo "Création du lien de stockage..."
+    php artisan storage:link
+fi
 
 # Permissions
-echo "Définition des permissions pour storage et bootstrap/cache..."
+echo "Définition des permissions..."
 chmod -R 775 storage bootstrap/cache
 
-# Vérification installation
-echo "Vérification de l'installation..."
-php artisan route:list
-
 echo "=== Installation terminée ==="
-echo "IMPORTANT: Voici votre PAYMENT_HUB_SECRET à copier dans WordPress :"
-echo "$HUB_SECRET"
+echo "Domaine: https://$DOMAIN"
+echo "Admin email: admin@$DOMAIN (Password: root)"
 echo "------------------------------------------------------------"
-echo "Connectez-vous avec l'admin par défaut défini dans les seeders."
