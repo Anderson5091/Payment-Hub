@@ -6,7 +6,7 @@ class HmacService
 {
     public static function generate(array $data, ?string $secret = null): string
     {
-        $secret = (string)($secret ?? config('app.hmac_secret'));
+        $secret = (string)($secret ?? config('app.payment_hub_secret'));
         ksort($data);
         
         // Ensure all values are scalar for implode

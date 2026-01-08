@@ -78,7 +78,7 @@ DB_DATABASE=paymenthub
 DB_USERNAME=root
 DB_PASSWORD=
 
-HMAC_SECRET=change_this_secret_key
+PAYMENT_HUB_SECRET=change_this_secret_key
 ```
 
 ---

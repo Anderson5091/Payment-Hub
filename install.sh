@@ -35,10 +35,13 @@ read -p "Base de données nom: " DB_NAME
 read -p "Utilisateur DB: " DB_USER
 read -s -p "Mot de passe DB: " DB_PASS
 echo ""
+read -s -p "Clé secrète Payment Hub (PAYMENT_HUB_SECRET): " HUB_SECRET
+echo ""
 
 sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_NAME/" .env
 sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USER/" .env
 sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASS/" .env
+sed -i "s/PAYMENT_HUB_SECRET=.*/PAYMENT_HUB_SECRET=$HUB_SECRET/" .env
 
 # Migrations et seeders
 echo "Exécution des migrations et seeders..."

@@ -19,7 +19,7 @@ class WooCallbackService
             'timestamp' => time(),
         ];
 
-        $secret = config('app.hmac_secret');
+        $secret = config('app.payment_hub_secret');
         $payload['signature'] = HmacService::sign($payload, (string)$secret);
 
         try {

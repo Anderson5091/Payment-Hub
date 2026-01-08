@@ -90,6 +90,6 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
     ],
 
-    'hmac_secret' => env('HMAC_SECRET'),
+    'payment_hub_secret' => env('PAYMENT_HUB_SECRET'),
     'upload_max_size' => env('UPLOAD_MAX_SIZE', 5120),
 ];

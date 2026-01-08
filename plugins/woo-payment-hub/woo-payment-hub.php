@@ -61,7 +61,7 @@ add_action('wp_ajax_payment_hub_test_connection', function () {
     }
 
     $payload = ['timestamp' => time()];
-    $signature = hash_hmac('sha256', json_encode($payload), $gateway->secret_key);
+    $signature = Payment_Hub_HMAC::sign($payload, $gateway->secret_key);
 
     $response = wp_remote_post(
         trailingslashit($gateway->hub_url) . 'api/ping',
