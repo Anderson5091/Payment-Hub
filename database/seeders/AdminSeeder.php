@@ -11,9 +11,9 @@ class AdminSeeder extends Seeder
     public function run()
     {
         User::create([
-            'name' => 'Admin Payment Hub',
-            'email' => 'admin@payment_hub.com',//admin@paymenthub.com before
-            'password' => Hash::make('ChangeMe123!'),
+            'name' => 'Administrator',
+            'email' => 'admin@your_domain.com',
+            'password' => Hash::make('root'),
             'is_admin' => true
         ]);
     }
