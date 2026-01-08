@@ -35,8 +35,10 @@ read -p "Base de données nom: " DB_NAME
 read -p "Utilisateur DB: " DB_USER
 read -s -p "Mot de passe DB: " DB_PASS
 echo ""
-read -s -p "Clé secrète Payment Hub (PAYMENT_HUB_SECRET): " HUB_SECRET
-echo ""
+
+# Génération automatique du secret
+echo "Génération de la clé secrète Payment Hub..."
+HUB_SECRET=$(php -r "echo bin2hex(random_bytes(32));")
 
 sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_NAME/" .env
 sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USER/" .env
@@ -63,4 +65,7 @@ echo "Vérification de l'installation..."
 php artisan route:list
 
 echo "=== Installation terminée ==="
+echo "IMPORTANT: Voici votre PAYMENT_HUB_SECRET à copier dans WordPress :"
+echo "$HUB_SECRET"
+echo "------------------------------------------------------------"
 echo "Connectez-vous avec l'admin par défaut défini dans les seeders."
