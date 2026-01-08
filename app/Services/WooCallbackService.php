@@ -19,8 +19,8 @@ class WooCallbackService
             'timestamp' => time(),
         ];
 
-        $secret = config('services.woo.secret');
-        $payload['signature'] = HmacService::sign($payload, $secret);
+        $secret = config('app.hmac_secret');
+        $payload['signature'] = HmacService::sign($payload, (string)$secret);
 
         try {
             $response = Http::timeout(10)->post(

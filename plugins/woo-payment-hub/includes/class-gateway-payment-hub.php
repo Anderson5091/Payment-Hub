@@ -68,25 +68,49 @@ class WC_Gateway_Payment_Hub extends WC_Payment_Gateway {
 
         $order = wc_get_order($order_id);
 
-        $order->update_status(
-            'on-hold',
-            'En attente de validation du paiement via Payment Hub'
-        );
+        if (!$order) {
+            return ['result' => 'error'];
+        }
 
-        // 🔐 Génération token HMAC (conforme au document)
-        $payload = implode('|', [
-            $order_id,
-            $order->get_total(),
-            time()
+        $payload = [
+            'order_id'     => $order_id,
+            'amount'       => $order->get_total(),
+            'currency'     => $order->get_currency(),
+            'shop_domain'  => home_url(),
+            'callback_url' => get_rest_url(null, 'payment/v1/confirm'),
+        ];
+
+        // Sign the request for the middleware
+        $signature = Payment_Hub_HMAC::sign($payload, $this->secret_key);
+
+        $response = wp_remote_post(trailingslashit($this->hub_url) . 'api/payment/init', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'X-Signature'  => $signature
+            ],
+            'body'    => json_encode($payload),
+            'timeout' => 15
         ]);
 
-        $token = hash_hmac('sha256', $payload, $this->secret_key);
+        if (is_wp_error($response)) {
+            wc_add_notice('Erreur de communication avec le Payment Hub.', 'error');
+            return ['result' => 'error'];
+        }
 
-        $redirect_url = trailingslashit($this->hub_url) . 'pay?token=' . $token;
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (empty($body['redirect_url'])) {
+            wc_add_notice('Le Payment Hub a renvoyé une réponse invalide.', 'error');
+            return ['result' => 'error'];
+        }
+
+        // Marquer la commande
+        $order->update_status('on-hold', 'Redirection vers Payment Hub effectuée.');
+        wc_empty_cart();
 
         return [
             'result'   => 'success',
-            'redirect' => $redirect_url
+            'redirect' => $body['redirect_url']
         ];
     }
 

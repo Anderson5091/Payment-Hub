@@ -10,9 +10,14 @@ class Payment_Hub_HMAC {
 
         ksort($data);
 
-        $payload = implode('|', $data);
+        // Ensure all values are scalar for implode
+        $values = array_map(function($val) {
+            return is_scalar($val) ? (string)$val : json_encode($val);
+        }, $data);
 
-        return hash_hmac('sha256', $payload, $secret);
+        $payload = implode('|', $values);
+
+        return hash_hmac('sha256', (string)$payload, (string)$secret);
     }
 
     /**

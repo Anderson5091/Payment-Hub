@@ -12,15 +12,18 @@ add_action('rest_api_init', function () {
 function payment_hub_confirm(WP_REST_Request $request)
 {
     $data = $request->get_json_params();
-    $secret = PAYMENT_HUB_SECRET;
+    
+    // Retrieve secret from constant or settings
+    $secret = defined('PAYMENT_HUB_SECRET') ? PAYMENT_HUB_SECRET : get_option('woocommerce_payment_hub_settings')['secret_key'] ?? '';
 
-    $signature = $data['signature'];
+    if (empty($secret)) {
+        return new WP_REST_Response(['error' => 'Secret not configured'], 500);
+    }
+
+    $signature = $data['signature'] ?? '';
     unset($data['signature']);
 
-    ksort($data);
-    $expected = hash_hmac('sha256', json_encode($data), $secret);
-
-    if (!hash_equals($expected, $signature)) {
+    if (!Payment_Hub_HMAC::verify($data, $secret, (string)$signature)) {
         return new WP_REST_Response(['error' => 'Invalid signature'], 403);
     }
 

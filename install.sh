@@ -48,7 +48,7 @@ php artisan migrate --seed
 echo "Création du lien de stockage pour les preuves..."
 php artisan storage:link
 
-php /path/to/payment-hub/artisan payment:retry-callbacks
+php ./artisan payment:retry-callbacks
 
 
 # Permissions
