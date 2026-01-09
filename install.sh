@@ -32,13 +32,6 @@ if ! grep -q "APP_KEY=base64" .env; then
     php artisan key:generate
 fi
 
-# Génération automatique du secret Payment Hub si vide
-if grep -q "PAYMENT_HUB_SECRET=CHANGE_ME_SECRET" .env; then
-    echo "Génération de la clé secrète Payment Hub..."
-    HUB_SECRET=$(php -r "echo bin2hex(random_bytes(32));")
-    sed -i "s/PAYMENT_HUB_SECRET=.*/PAYMENT_HUB_SECRET=$HUB_SECRET/" .env
-fi
-
 # Création des dossiers nécessaires
 echo "Création des dossiers de cache et storage..."
 mkdir -p bootstrap/cache
@@ -49,6 +42,14 @@ mkdir -p storage/framework/cache
 # Permissions
 echo "Définition des permissions..."
 chmod -R 775 storage bootstrap/cache
+
+# Génération automatique du secret Payment Hub si vide
+if grep -q "PAYMENT_HUB_SECRET=CHANGE_ME_SECRET" .env; then
+    echo "Génération de la clé secrète Payment Hub..."
+    HUB_SECRET=$(php -r "echo bin2hex(random_bytes(32));")
+    sed -i "s/PAYMENT_HUB_SECRET=.*/PAYMENT_HUB_SECRET=$HUB_SECRET/" .env
+fi
+
 
 # Migrations et seeders
 echo "Exécution des migrations et seeders..."
