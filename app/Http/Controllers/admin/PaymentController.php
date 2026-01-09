@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+//rename folder
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\PaymentLog;
