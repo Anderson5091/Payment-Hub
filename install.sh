@@ -39,16 +39,6 @@ if grep -q "PAYMENT_HUB_SECRET=CHANGE_ME_SECRET" .env; then
     sed -i "s/PAYMENT_HUB_SECRET=.*/PAYMENT_HUB_SECRET=$HUB_SECRET/" .env
 fi
 
-# Migrations et seeders
-echo "Exécution des migrations et seeders..."
-php artisan migrate --seed --force
-
-# Lien de stockage
-if [ ! -d public/storage ]; then
-    echo "Création du lien de stockage..."
-    php artisan storage:link
-fi
-
 # Création des dossiers nécessaires
 echo "Création des dossiers de cache et storage..."
 mkdir -p bootstrap/cache
@@ -59,6 +49,17 @@ mkdir -p storage/framework/cache
 # Permissions
 echo "Définition des permissions..."
 chmod -R 775 storage bootstrap/cache
+
+# Migrations et seeders
+echo "Exécution des migrations et seeders..."
+php artisan migrate --seed --force
+
+# Lien de stockage
+if [ ! -d public/storage ]; then
+    echo "Création du lien de stockage..."
+    php artisan storage:link
+fi
+
 
 echo "=== Installation terminée ==="
 echo "Domaine: https://$DOMAIN"
