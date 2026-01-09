@@ -2,6 +2,9 @@
 
 echo "=== Payment Hub Installation ==="
 
+# Correction immédiate des fins de ligne (au cas où)
+sed -i 's/\r$//' install.sh
+
 # Get Domain from argument or prompt
 DOMAIN=$1
 if [ -z "$DOMAIN" ]; then
@@ -17,10 +20,17 @@ if [ ! -f .env ]; then
   sed -i "s|APP_URL=.*|APP_URL=https://$DOMAIN|" .env
   sed -i "s|ADMIN_EMAIL=.*|ADMIN_EMAIL=admin@$DOMAIN|" .env
   
-  echo "Veuillez configurer manuellement vos accès DB dans le fichier .env sur Hostinger."
+  echo "⚠️ Veuillez configurer vos accès DB dans le fichier .env, "
   echo "Une fois fait, relancez ce script."
   exit 0
 fi
+
+# Création des dossiers nécessaires
+echo "Création des dossiers de cache et storage..."
+mkdir -p bootstrap/cache storage/framework/{sessions,views,cache} storage/logs
+# Permissions
+echo "Définition des permissions..."
+chmod -R 775 storage bootstrap/cache
 
 # Installation des dépendances
 echo "Installation des dépendances Composer..."
@@ -32,16 +42,6 @@ if ! grep -q "APP_KEY=base64" .env; then
     php artisan key:generate
 fi
 
-# Création des dossiers nécessaires
-echo "Création des dossiers de cache et storage..."
-mkdir -p bootstrap/cache
-mkdir -p storage/framework/sessions
-mkdir -p storage/framework/views
-mkdir -p storage/framework/cache
-
-# Permissions
-echo "Définition des permissions..."
-chmod -R 775 storage bootstrap/cache
 
 # Génération automatique du secret Payment Hub si vide
 if grep -q "PAYMENT_HUB_SECRET=CHANGE_ME_SECRET" .env; then
@@ -55,11 +55,11 @@ fi
 echo "Exécution des migrations et seeders..."
 php artisan migrate --seed --force
 
-# Lien de stockage
-if [ ! -d public/storage ]; then
-    echo "Création du lien de stockage..."
-    php artisan storage:link
-fi
+
+# Lien de stockage (Version compatible Hostinger)
+echo "Création du lien de stockage (méthode native Linux)..."
+rm -rf public/storage # Supprime un éventuel lien mort
+ln -s ../storage/app/public public/storage
 
 
 echo "=== Installation terminée ==="
