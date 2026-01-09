@@ -1,0 +1,2 @@
+# Force les fichiers shell à toujours utiliser LF (Linux)
+*.sh text eol=lf

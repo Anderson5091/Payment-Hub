@@ -70,6 +70,6 @@ echo "Admin email: admin@$DOMAIN (Password: root)"
 HUB_SECRET=$(grep "PAYMENT_HUB_SECRET=" .env | cut -d '=' -f2)
 echo "Payment Hub Secret: $HUB_SECRET"
 echo ""
-echo "IMPORTANT: Veuillez installer et configurer le plugin 'wo_payment-hub' sur votre site WordPress"
+echo "IMPORTANT: Veuillez installer et configurer le plugin wo_payment-hub sur votre site WordPress"
 echo "en utilisant la clé secrète ci-dessus."
 echo "------------------------------------------------------------"
