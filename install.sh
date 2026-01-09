@@ -49,6 +49,13 @@ if [ ! -d public/storage ]; then
     php artisan storage:link
 fi
 
+# Création des dossiers nécessaires
+echo "Création des dossiers de cache et storage..."
+mkdir -p bootstrap/cache
+mkdir -p storage/framework/sessions
+mkdir -p storage/framework/views
+mkdir -p storage/framework/cache
+
 # Permissions
 echo "Définition des permissions..."
 chmod -R 775 storage bootstrap/cache
@@ -56,4 +63,11 @@ chmod -R 775 storage bootstrap/cache
 echo "=== Installation terminée ==="
 echo "Domaine: https://$DOMAIN"
 echo "Admin email: admin@$DOMAIN (Password: root)"
+
+# Récupérer la clé secrète pour l'affichage
+HUB_SECRET=$(grep "PAYMENT_HUB_SECRET=" .env | cut -d '=' -f2)
+echo "Payment Hub Secret: $HUB_SECRET"
+echo ""
+echo "IMPORTANT: Veuillez installer et configurer le plugin 'wo_payment-hub' sur votre site WordPress"
+echo "en utilisant la clé secrète ci-dessus."
 echo "------------------------------------------------------------"
