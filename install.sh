@@ -2,9 +2,6 @@
 
 echo "=== Payment Hub Installation ==="
 
-# Correction immédiate des fins de ligne (au cas où)
-sed -i 's/\r$//' install.sh
-
 # Get Domain from argument or prompt
 DOMAIN=$1
 if [ -z "$DOMAIN" ]; then

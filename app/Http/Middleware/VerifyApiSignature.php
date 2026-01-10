@@ -15,7 +15,11 @@ class VerifyApiSignature
             return response()->json(['error' => 'Missing signature'], 401);
         }
 
-        $data = $request->except(['signature']);
+        // Get all data from the request (including JSON body)
+        $data = $request->all();
+        
+        // Remove signature field if present in the body
+        unset($data['signature']);
 
         if (!HmacService::verify($data, $signature)) {
             return response()->json(['error' => 'Invalid signature'], 403);

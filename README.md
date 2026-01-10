@@ -26,37 +26,25 @@ Extensions PHP nécessaires :
 
 ---
 
-## Installation
-
-1. Cloner le dépôt :
+## Installation Rapide
 
 ```bash
-git clone https://github.com/your-org/payment-hub.git
+# 1. Déployer le code
+cd public_html
+git clone https://votre-repo.git payment-hub
 cd payment-hub
-```
 
-2. Exécuter le script d'installation :
-
-```bash
+# 2. Lancer l'installation
 chmod +x install.sh
+./install.sh votre-domaine.com
+
+# 3. Éditer .env avec vos accès DB, puis relancer
 ./install.sh
 ```
 
-Le script :
+**Voir le guide complet :** [QUICK_START.md](./QUICK_START.md)
 
-* vérifie PHP et Composer
-* installe les dépendances
-* crée le fichier `.env`
-* génère la clé Laravel
-* exécute les migrations et seeders
-* crée le lien de stockage pour les preuves
-* définit les permissions
-
-3. Accéder au Payment Hub via le navigateur :
-
-```
-http://votre-domaine.com
-```
+**Déploiement Hostinger :** [HOSTINGER_DEPLOYMENT.md](./HOSTINGER_DEPLOYMENT.md)
 
 ---
 
