@@ -1,5 +1,15 @@
 # Solution pour l'Erreur 403
 
+## ⚠️ Serveur LiteSpeed (Hostinger)
+
+Si vous êtes sur **Hostinger**, et que votre serveur utilise **LiteSpeed**, pas Apache.
+
+**📖 Voir le guide complet :** [HOSTINGER_LITESPEED_FIX.md](./HOSTINGER_LITESPEED_FIX.md)
+
+**🧪 Test rapide :** `php test-litespeed.php`
+
+---
+
 ## Le Problème
 
 Quand le document root du serveur ne peut pas pointer vers `/public`, une erreur 403 apparaît.

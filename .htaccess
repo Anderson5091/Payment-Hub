@@ -1,14 +1,7 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Bloquer l'accès aux dossiers sensibles
-    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor)/.*$ - [F,L]
-    
-    # Bloquer l'accès aux fichiers sensibles
-    RewriteRule ^(\..*)$ - [F,L]
-    RewriteRule ^(artisan|composer\.(json|lock)|package\.json|.*\.md)$ - [F,L]
-    
-    # Autoriser explicitement l'accès au dossier public/
+    # Redirection simple vers public/
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
