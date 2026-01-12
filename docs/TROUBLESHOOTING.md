@@ -6,7 +6,7 @@
 
 Le `.htaccess` à la racine redirige automatiquement vers `/public`. Si vous avez une erreur 403 :
 
-**Voir le guide détaillé :** [FIX_403_ERROR.md](./FIX_403_ERROR.md)
+**Voir le guide détaillé :** [FIX_403_ERROR.md](./docs/FIX_403_ERROR.md)
 
 ### Solution Recommandée
 

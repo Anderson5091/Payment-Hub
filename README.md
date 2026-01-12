@@ -42,9 +42,9 @@ chmod +x install.sh
 ./install.sh
 ```
 
-**Voir le guide complet :** [QUICK_START.md](./QUICK_START.md)
+**Voir le guide complet :** [QUICK_START.md](./docs/QUICK_START.md)
 
-**Déploiement Hostinger :** [HOSTINGER_DEPLOYMENT.md](./HOSTINGER_DEPLOYMENT.md)
+**Déploiement Hostinger :** [HOSTINGER_DEPLOYMENT.md](./docs/HOSTINGER_DEPLOYMENT.md)
 
 ---
 
