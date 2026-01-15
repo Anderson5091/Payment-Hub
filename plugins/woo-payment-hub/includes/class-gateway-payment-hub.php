@@ -19,9 +19,10 @@ class WC_Gateway_Payment_Hub extends WC_Payment_Gateway {
         $this->init_form_fields();
         $this->init_settings();
 
-        $this->title      = $this->get_option('title');
-        $this->hub_url    = (string) $this->get_option('hub_url');
-        $this->secret_key = (string) $this->get_option('secret_key');
+        $this->title       = (string) $this->get_option('title');
+        $this->description = (string) $this->get_option('description');
+        $this->hub_url     = (string) $this->get_option('hub_url');
+        $this->secret_key  = (string) $this->get_option('secret_key');
 
         add_action(
             'woocommerce_update_options_payment_gateways_' . $this->id,
@@ -45,6 +46,12 @@ class WC_Gateway_Payment_Hub extends WC_Payment_Gateway {
                 'title'   => 'Titre affiché',
                 'type'    => 'text',
                 'default' => 'Paiement manuel (Payment Hub)'
+            ],
+            'description' => [
+                'title'   => 'Description',
+                'type'    => 'textarea',
+                'default' => 'Payez en toute sécurité via notre Payment Hub.',
+                'desc_tip' => true,
             ],
             'hub_url' => [
                 'title'       => 'URL Payment Hub',
