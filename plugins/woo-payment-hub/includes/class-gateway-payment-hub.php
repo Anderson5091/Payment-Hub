@@ -23,6 +23,7 @@ class WC_Gateway_Payment_Hub extends WC_Payment_Gateway {
         $this->description = (string) $this->get_option('description');
         $this->hub_url     = (string) $this->get_option('hub_url');
         $this->secret_key  = (string) $this->get_option('secret_key');
+        $this->test_mode   = $this->get_option('test_mode') === 'yes';
 
         add_action(
             'woocommerce_update_options_payment_gateways_' . $this->id,
@@ -65,6 +66,13 @@ class WC_Gateway_Payment_Hub extends WC_Payment_Gateway {
                 'description' => 'Clé partagée avec le Payment Hub',
                 'desc_tip'    => true
             ],
+            'test_mode' => [
+                'title'       => 'Mode Test / Debug',
+                'type'        => 'checkbox',
+                'label'       => 'Activer le mode debug (bypass SSL + Logs détaillés)',
+                'default'     => 'no',
+                'description' => 'À n\'activer que pour le dépannage informatique.',
+            ],
         ];
     }
 
@@ -90,21 +98,48 @@ class WC_Gateway_Payment_Hub extends WC_Payment_Gateway {
         // Sign the request for the middleware
         $signature = Payment_Hub_HMAC::sign($payload, $this->secret_key);
 
-        $response = wp_remote_post(trailingslashit($this->hub_url) . 'api/payment/init', [
+        $args = [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Signature'  => $signature
             ],
             'body'    => json_encode($payload),
             'timeout' => 15
-        ]);
+        ];
+
+        if ($this->test_mode) {
+            $args['sslverify'] = false;
+        }
+
+        $hub_init_url = trailingslashit($this->hub_url) . 'api/payment/init';
+        $response = wp_remote_post($hub_init_url, $args);
 
         if (is_wp_error($response)) {
-            wc_add_notice('Erreur de communication avec le Payment Hub.', 'error');
+            $error_message = $response->get_error_message();
+            error_log("Payment Hub Communication Error: " . $error_message);
+            
+            if ($this->test_mode) {
+                wc_add_notice('Erreur Hub (Debug): ' . $error_message, 'error');
+            } else {
+                wc_add_notice('Erreur de communication avec le Payment Hub.', 'error');
+            }
             return ['result' => 'error'];
         }
 
-        $body = json_decode(wp_remote_retrieve_body($response), true);
+        $http_code = wp_remote_retrieve_response_code($response);
+        $body_raw = wp_remote_retrieve_body($response);
+        $body = json_decode($body_raw, true);
+
+        if ($http_code !== 200) {
+            error_log("Payment Hub Invalid Response. Code: $http_code. Body: " . $body_raw);
+            
+            if ($this->test_mode) {
+                wc_add_notice("Erreur Hub (HTTP $http_code): " . ($body['error'] ?? $body['message'] ?? 'Réponse invalide'), 'error');
+            } else {
+                wc_add_notice('Le Payment Hub a renvoyé une réponse invalide.', 'error');
+            }
+            return ['result' => 'error'];
+        }
 
         if (empty($body['redirect_url'])) {
             wc_add_notice('Le Payment Hub a renvoyé une réponse invalide.', 'error');
